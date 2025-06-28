@@ -32,14 +32,14 @@
 ### 1. دانلود اسکریپت
 
 ```bash
-curl -O https://raw.githubusercontent.com/your-repo/ssl-cert-manager.sh
-chmod +x ssl-cert-manager.sh
+curl -o certbot-for-hiddify.sh https://raw.githubusercontent.com/ryuk-74/certbot-ssl-for-hiddify/main/certbot-for-hiddify.sh
+chmod +x certbot-for-hiddify.sh
 ```
 
 ### 2. اجرای اسکریپت
 
 ```bash
-sudo ./ssl-cert-manager.sh
+./certbot-for-hiddify.sh
 ```
 
 ## راهنمای استفاده
