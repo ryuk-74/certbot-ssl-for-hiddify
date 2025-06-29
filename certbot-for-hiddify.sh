@@ -21,56 +21,6 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # Global variables
-# --- Enhancements Added ---
-# - Rate Limiting Check
-# - Auto Renewal via --cron
-# - DNS Validation Before Cert Request
-# - Backup Before Certbot Runs
-# - Secure File Operations with 'set -euo pipefail' and umask
-
-umask 027
-
-BACKUP_DIR="/root/le_backup_$(date +%F_%T)"
-RATE_LIMIT_LOG="/var/log/ssl-rate-limit.log"
-RATE_LIMIT_THRESHOLD=5
-
-# Function: Backup certificates
-backup_certs() {
-    mkdir -p "$BACKUP_DIR"
-    cp -a /etc/letsencrypt "$BACKUP_DIR/"
-    echo "Backup created at $BACKUP_DIR" >> "$LOG_FILE"
-}
-
-# Function: Check for DNS resolution
-check_dns() {
-    for domain in "${DOMAINS[@]}"; do
-        if ! host "$domain" >/dev/null 2>&1; then
-            log "ERROR" "DNS check failed for $domain"
-            exit 1
-        fi
-    done
-}
-
-# Function: Check for rate limit hits
-check_rate_limit() {
-    local recent_hits
-    recent_hits=$(grep -c "rate limit" "$RATE_LIMIT_LOG" || true)
-    if (( recent_hits >= RATE_LIMIT_THRESHOLD )); then
-        log "WARN" "Approaching Let's Encrypt rate limit threshold!"
-    fi
-}
-
-# Auto Renewal Entry
-if [[ "$1" == "--cron" ]]; then
-    load_domains
-    check_dns
-    check_rate_limit
-    backup_certs
-    request_all_certs
-    exit 0
-fi
-# --- End of Enhancements ---
-
 declare -a DOMAINS=()
 
 # Logging function
